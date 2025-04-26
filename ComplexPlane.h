@@ -1,3 +1,4 @@
+//Created by Chris Planow and Ali Chenari
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <string>

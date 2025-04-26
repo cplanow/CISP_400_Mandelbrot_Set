@@ -1,3 +1,5 @@
+//Created by Chris Planow and Ali Chenari
+
 #include <SFML/Graphics.hpp>
 #include "ComplexPlane.h"
 #include <iostream>

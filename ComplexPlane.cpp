@@ -1,3 +1,4 @@
+//Created by Chris Planow and Ali Chenari
 #include <iostream>
 #include <string>
 #include <math.h>
