@@ -2,6 +2,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <thread>
+#include <vector>
 
 // Global constants
 const unsigned int MAX_ITER = 64;
