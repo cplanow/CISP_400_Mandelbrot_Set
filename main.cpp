@@ -1,9 +1,7 @@
-#include <iostream>
-#include <string>
-#include <math.h>
 #include <SFML/Graphics.hpp>
 #include "ComplexPlane.h"
-
+#include <iostream>
+using namespace std;
 using namespace sf;
 
 int main()
@@ -22,7 +20,7 @@ int main()
     Font font;
     if (!font.loadFromFile("arial.ttf"))
     {
-        cout << "Error loading font" << endl;
+        std::cout << "Error loading font" << std::endl;
         return -1;
     }
     Text text;
@@ -45,29 +43,27 @@ int main()
             // Handle mouse clicks
             if (event.type == Event::MouseButtonPressed)
             {
-                // Get mouse position
                 Vector2i mousePos = Mouse::getPosition(window);
                 
                 // Right click to zoom out
                 if (event.mouseButton.button == Mouse::Right)
                 {
                     plane.zoomOut();
-                    plane.setCenter(mousePos.x, mousePos.y);
+                    plane.setCenter(mousePos);
                 }
                 // Left click to zoom in
                 else if (event.mouseButton.button == Mouse::Left)
                 {
                     plane.zoomIn();
-                    plane.setCenter(mousePos.x, mousePos.y);
+                    plane.setCenter(mousePos);
                 }
             }
 
             // Handle mouse movement
             if (event.type == Event::MouseMoved)
             {
-                // Update mouse location in ComplexPlane
                 Vector2i mousePos = Mouse::getPosition(window);
-                plane.setMouseLocation(mousePos.x, mousePos.y);
+                plane.setMouseLocation(mousePos);
             }
         }
 

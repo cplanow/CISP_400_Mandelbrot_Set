@@ -1,6 +1,4 @@
-#ifndef COMPLEXPLANE_H
-#define COMPLEXPLANE_H
-
+#pragma once
 #include <SFML/Graphics.hpp>
 #include <string>
 
@@ -26,10 +24,12 @@ private:
     sf::Vector2f m_mouseLocation;
     sf::Vector2i m_pixelSize;
     sf::Vector2f m_planeCenter;
+    sf::Vector2f m_planeSize;
     float m_zoomLevel;
-    size_t m_iterations;
+    float m_aspectRatio;
 
-    // Pure virtual function from sf::Drawable
+    // Private methods
+    void iterationsToRGB(size_t count, sf::Uint8& r, sf::Uint8& g, sf::Uint8& b);
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 public:
@@ -48,5 +48,3 @@ public:
     sf::Vector2f mapPixelToCoords(sf::Vector2i mousePixel);
     size_t countIterations(sf::Vector2f coord);
 };
-
-#endif
