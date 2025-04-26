@@ -28,23 +28,47 @@ void ComplexPlane::updateRender()
 {
     if (m_state == State::CALCULATING)
     {
-        for (int i = 0; i < m_pixelSize.y; ++i)
+        const int num_threads = std::thread::hardware_concurrency();
+        std::vector<std::thread> threads;
+
+        // Calculate rows per thread
+        int rows_per_thread = m_pixelSize.y / num_threads;
+
+        // Launch threads
+        for (int t = 0; t < num_threads; ++t)
         {
-            for (int j = 0; j < m_pixelSize.x; ++j)
-            {
-                m_vertices[j + i * m_pixelSize.x].position = {static_cast<float>(j), static_cast<float>(i)};
-                
-                sf::Vector2f coords = mapPixelToCoords({j, i});
-                size_t iterations = countIterations(coords);
-                
-                sf::Uint8 r, g, b;
-                iterationsToRGB(iterations, r, g, b);
-                m_vertices[j + i * m_pixelSize.x].color = sf::Color(r, g, b);
-            }
+            int start_row = t * rows_per_thread;
+            int end_row = (t == num_threads - 1) ? m_pixelSize.y : start_row + rows_per_thread;
+
+            threads.emplace_back([this, start_row, end_row]() {
+                for (int i = start_row; i < end_row; ++i)
+                {
+                    for (int j = 0; j < m_pixelSize.x; ++j)
+                    {
+                        size_t index = j + i * m_pixelSize.x;
+                        m_vertices[index].position = {static_cast<float>(j), static_cast<float>(i)};
+
+                        sf::Vector2f coords = mapPixelToCoords({j, i});
+                        size_t iterations = countIterations(coords);
+
+                        sf::Uint8 r, g, b;
+                        iterationsToRGB(iterations, r, g, b);
+                        m_vertices[index].color = sf::Color(r, g, b);
+                    }
+                }
+            });
         }
+
+        // Wait for all threads to finish
+        for (auto& thread : threads)
+        {
+            thread.join();
+        }
+
         m_state = State::DISPLAYING;
     }
 }
+
 
 void ComplexPlane::zoomIn()
 {
@@ -78,9 +102,11 @@ void ComplexPlane::setMouseLocation(sf::Vector2i mousePixel)
 void ComplexPlane::loadText(sf::Text& text)
 {
     std::stringstream ss;
-    ss << "Cursor: (" << m_mouseLocation.x << ", " << m_mouseLocation.y << ")\n";
+    ss << "Mandelbrot Set\n";
     ss << "Center: (" << m_planeCenter.x << ", " << m_planeCenter.y << ")\n";
-    ss << "Zoom Level: " << m_zoomLevel;
+    ss << "Cursor: (" << m_mouseLocation.x << ", " << m_mouseLocation.y << ")\n";
+    ss << "Left-click to zoom in\n";
+    ss << "Right-click to zoom out";
     text.setString(ss.str());
 }
 
@@ -113,41 +139,30 @@ void ComplexPlane::iterationsToRGB(size_t count, sf::Uint8& r, sf::Uint8& g, sf:
     }
 
     float normalized = static_cast<float>(count) / MAX_ITER;
-    if (normalized < 0.2f)
-    {
-        // Purple to blue
-        r = static_cast<sf::Uint8>(128 * (normalized * 5));
-        g = 0;
-        b = 255;
-    }
-    else if (normalized < 0.4f)
-    {
-        // Blue to turquoise
-        r = 0;
-        g = static_cast<sf::Uint8>(255 * ((normalized - 0.2f) * 5));
-        b = 255;
-    }
-    else if (normalized < 0.6f)
-    {
-        // Turquoise to green
-        r = 0;
-        g = 255;
-        b = static_cast<sf::Uint8>(255 * (1 - ((normalized - 0.4f) * 5)));
-    }
-    else if (normalized < 0.8f)
-    {
-        // Green to yellow
-        r = static_cast<sf::Uint8>(255 * ((normalized - 0.6f) * 5));
-        g = 255;
-        b = 0;
-    }
-    else
-    {
-        // Yellow to red
-        r = 255;
-        g = static_cast<sf::Uint8>(255 * (1 - ((normalized - 0.8f) * 5)));
-        b = 0;
-    }
+
+    // Example 1: Simple grayscale
+    r = g = b = static_cast<sf::Uint8>(normalized * 255);
+
+    // Example 2: Fire color scheme
+    /*
+    r = static_cast<sf::Uint8>(255);
+    g = static_cast<sf::Uint8>(normalized * 128);
+    b = static_cast<sf::Uint8>(normalized * 64);
+    */
+
+    // Example 3: Ocean colors
+    /*
+    r = static_cast<sf::Uint8>(normalized * 64);
+    g = static_cast<sf::Uint8>(normalized * 128);
+    b = static_cast<sf::Uint8>(255);
+    */
+
+    // Example 4: Psychedelic
+    /*
+    r = static_cast<sf::Uint8>(sin(normalized * 3.14159 * 2) * 127 + 128);
+    g = static_cast<sf::Uint8>(sin(normalized * 3.14159 * 4) * 127 + 128);
+    b = static_cast<sf::Uint8>(sin(normalized * 3.14159 * 6) * 127 + 128);
+    */
 }
 
 sf::Vector2f ComplexPlane::mapPixelToCoords(sf::Vector2i mousePixel)
