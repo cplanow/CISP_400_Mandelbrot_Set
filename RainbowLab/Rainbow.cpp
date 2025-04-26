@@ -1,4 +1,4 @@
-#include "Rainbow.h"
+#include "../Rainbow.h"
 
 RainbowScreen::RainbowScreen(int pixelWidth, int pixelHeight)
 {
