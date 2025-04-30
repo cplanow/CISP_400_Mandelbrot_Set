@@ -5,6 +5,7 @@
 #include "ComplexPlane.h"
 #include <cmath>
 #include <sstream>
+using namespace std;
 
 ComplexPlane::ComplexPlane(int pixelWidth, int pixelHeight)
 {
@@ -28,8 +29,8 @@ void ComplexPlane::updateRender()
 {
     if (m_state == State::CALCULATING)
     {
-        const int num_threads = std::thread::hardware_concurrency();
-        std::vector<std::thread> threads;
+        const int num_threads = thread::hardware_concurrency();
+        vector<thread> threads;
 
         // Calculate rows per thread
         int rows_per_thread = m_pixelSize.y / num_threads;
@@ -73,8 +74,8 @@ void ComplexPlane::updateRender()
 void ComplexPlane::zoomIn()
 {
     m_zoomLevel++;
-    float xSize = BASE_WIDTH * std::pow(BASE_ZOOM, m_zoomLevel);
-    float ySize = BASE_HEIGHT * m_aspectRatio * std::pow(BASE_ZOOM, m_zoomLevel);
+    float xSize = BASE_WIDTH * pow(BASE_ZOOM, m_zoomLevel);
+    float ySize = BASE_HEIGHT * m_aspectRatio * pow(BASE_ZOOM, m_zoomLevel);
     m_planeSize = {xSize, ySize};
     m_state = State::CALCULATING;
 }
@@ -82,8 +83,8 @@ void ComplexPlane::zoomIn()
 void ComplexPlane::zoomOut()
 {
     m_zoomLevel--;
-    float xSize = BASE_WIDTH * std::pow(BASE_ZOOM, m_zoomLevel);
-    float ySize = BASE_HEIGHT * m_aspectRatio * std::pow(BASE_ZOOM, m_zoomLevel);
+    float xSize = BASE_WIDTH * pow(BASE_ZOOM, m_zoomLevel);
+    float ySize = BASE_HEIGHT * m_aspectRatio * pow(BASE_ZOOM, m_zoomLevel);
     m_planeSize = {xSize, ySize};
     m_state = State::CALCULATING;
 }
@@ -101,12 +102,13 @@ void ComplexPlane::setMouseLocation(sf::Vector2i mousePixel)
 
 void ComplexPlane::loadText(sf::Text& text)
 {
-    std::stringstream ss;
+    stringstream ss;
     ss << "Mandelbrot Set\n";
     ss << "Center: (" << m_planeCenter.x << ", " << m_planeCenter.y << ")\n";
     ss << "Cursor: (" << m_mouseLocation.x << ", " << m_mouseLocation.y << ")\n";
     ss << "Left-click to zoom in\n";
-    ss << "Right-click to zoom out";
+    ss << "Right-click to zoom out\n";
+    ss << "Zoom Level: " << m_zoomLevel;
     text.setString(ss.str());
 }
 
@@ -140,8 +142,8 @@ void ComplexPlane::iterationsToRGB(size_t count, sf::Uint8& r, sf::Uint8& g, sf:
 
     float normalized = static_cast<float>(count) / MAX_ITER;
 
-    // Example 1: Simple grayscale
-    r = g = b = static_cast<sf::Uint8>(normalized * 255);
+    // // Example 1: Simple grayscale
+    // r = g = b = static_cast<sf::Uint8>(normalized * 255);
 
     // Example 2: Fire color scheme
     /*
@@ -158,11 +160,11 @@ void ComplexPlane::iterationsToRGB(size_t count, sf::Uint8& r, sf::Uint8& g, sf:
     */
 
     // Example 4: Psychedelic
-    /*
+
     r = static_cast<sf::Uint8>(sin(normalized * 3.14159 * 2) * 127 + 128);
     g = static_cast<sf::Uint8>(sin(normalized * 3.14159 * 4) * 127 + 128);
     b = static_cast<sf::Uint8>(sin(normalized * 3.14159 * 6) * 127 + 128);
-    */
+
 }
 
 sf::Vector2f ComplexPlane::mapPixelToCoords(sf::Vector2i mousePixel)
