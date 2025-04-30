@@ -9,8 +9,8 @@ using namespace sf;
 int main()
 {
     // Get desktop resolution and scale it down by 2 for better performance
-    int width = VideoMode::getDesktopMode().width / 2;
-    int height = VideoMode::getDesktopMode().height / 2;
+    int width = VideoMode::getDesktopMode().width / 1.5;
+    int height = VideoMode::getDesktopMode().height / 1.5;
 
     // Create the render window
     RenderWindow window(VideoMode(width, height), "Mandelbrot Set");
@@ -22,7 +22,7 @@ int main()
     Font font;
     if (!font.loadFromFile("arial.ttf"))
     {
-        std::cout << "Error loading font" << std::endl;
+        cout << "Error loading font" << endl;
         return -1;
     }
     Text text;
