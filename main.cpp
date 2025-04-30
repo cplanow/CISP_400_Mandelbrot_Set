@@ -9,8 +9,8 @@ using namespace sf;
 int main()
 {
     // Get desktop resolution and scale it down by 2 for better performance
-    int width = VideoMode::getDesktopMode().width / 1.5;
-    int height = VideoMode::getDesktopMode().height / 1.5;
+    int width = VideoMode::getDesktopMode().width / 2.0;
+    int height = VideoMode::getDesktopMode().height / 2.0;
 
     // Create the render window
     RenderWindow window(VideoMode(width, height), "Mandelbrot Set");

@@ -10,7 +10,7 @@ using namespace std;
 ComplexPlane::ComplexPlane(int pixelWidth, int pixelHeight)
 {
     m_pixelSize = {pixelWidth, pixelHeight};
-    m_aspectRatio = static_cast<float>(pixelHeight) / static_cast<float>(pixelWidth);
+    m_aspectRatio = static_cast<float> (pixelHeight /pixelWidth);
     m_planeCenter = {0, 0};
     m_zoomLevel = BASE_ZOOM;
     m_state = State::CALCULATING;
